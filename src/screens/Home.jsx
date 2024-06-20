@@ -81,7 +81,7 @@ const Home = () => {
                 />
                 </View>
               </View>
-              {/* <TouchableOpacity><Text className='uppercase w-fit bg-yellow-600 text-full text-center py-2 px-4 ' style={{fontFamily:'poppins'}}>Wishlist</Text></TouchableOpacity> */}
+              
             </View>
           </LinearGradient>
         </ImageBackground>
