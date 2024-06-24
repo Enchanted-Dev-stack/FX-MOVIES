@@ -51,18 +51,16 @@ const TabBar = ({navigation}: any) => {
         options={{
           tabBarIcon: ({focused}) => (
             <Image
-              source={{
-                uri: 'https://cdn3.iconfinder.com/data/icons/feather-5/24/search-512.png',
-              }}
+              source={require('../../assets/icons/search.webp')}
               style={{
                 width: 20,
                 height: 20,
-                tintColor: focused ? 'white' : 'gray',
+                tintColor: focused ? 'white' : 'aqua',
               }}
             />
           ),
           tabBarActiveTintColor: 'white',
-          tabBarInactiveTintColor: 'gray',
+          tabBarInactiveTintColor: 'aqua',
         }}
       />
       <tabs.Screen

@@ -9,6 +9,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import TabBar from './screens/TabBar';
 import Welcome from './screens/Welcome';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Player from './screens/Player';
+import MovieDetails from './screens/MovieDetails';
+import Toast from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator();
 function App() {
@@ -18,7 +21,10 @@ function App() {
       <Stack.Navigator initialRouteName="Welcome" screenOptions={{headerShown: false}}>
         <Stack.Screen name="TabBar" component={TabBar} />
         <Stack.Screen name="Welcome" component={Welcome} />
+        <Stack.Screen name="Player" component={Player} />
+        <Stack.Screen name="MovieDetails" component={MovieDetails} />
       </Stack.Navigator>
+      <Toast></Toast>
     </NavigationContainer>
     </GestureHandlerRootView>
   );

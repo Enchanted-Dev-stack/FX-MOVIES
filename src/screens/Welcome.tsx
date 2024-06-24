@@ -29,7 +29,7 @@ const Welcome = ({navigation}: any) => {
           className="bg-opacity-90 bg-slate-100 py-1 px-6 rounded-sm font-bold border border-y-0"
           style={{}}
           onPress={() => navigation.navigate('TabBar')}>
-        <GradientText style={{fontFamily:'Kalam-Regular',fontSize:18,textAlign:'center'}}>Explore -> </GradientText>
+        <GradientText style={{fontFamily:'Kalam-Regular',fontSize:18,textAlign:'center'}}>Explore - </GradientText>
         </TouchableOpacity>
       </Animatable.View>
     </View>

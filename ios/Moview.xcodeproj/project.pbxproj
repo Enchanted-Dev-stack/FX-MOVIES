@@ -42,6 +42,7 @@
 		2C1824E2076B40538248F8B0 /* Outfit-Var.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2792CA097B1C4305A865361F /* Outfit-Var.ttf */; };
 		BE8FD22DB2364CB39C01B826 /* Raleway-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2D1AFB39764545C9B5C63588 /* Raleway-Italic.ttf */; };
 		83E1784B5BD44E1CA9D7401C /* Raleway.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CA15411FFD4241F7B7BC74A1 /* Raleway.ttf */; };
+		159CBECA3A6B47DB91500716 /* Maven.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3D65DBEB81B34622B2596E3F /* Maven.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +102,7 @@
 		2792CA097B1C4305A865361F /* Outfit-Var.ttf */ = {isa = PBXFileReference; name = "Outfit-Var.ttf"; path = "../assets/fonts/Outfit-Var.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		2D1AFB39764545C9B5C63588 /* Raleway-Italic.ttf */ = {isa = PBXFileReference; name = "Raleway-Italic.ttf"; path = "../assets/fonts/Raleway-Italic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		CA15411FFD4241F7B7BC74A1 /* Raleway.ttf */ = {isa = PBXFileReference; name = "Raleway.ttf"; path = "../assets/fonts/Raleway.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3D65DBEB81B34622B2596E3F /* Maven.ttf */ = {isa = PBXFileReference; name = "Maven.ttf"; path = "../assets/fonts/Maven.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -238,6 +240,7 @@
 				2792CA097B1C4305A865361F /* Outfit-Var.ttf */,
 				2D1AFB39764545C9B5C63588 /* Raleway-Italic.ttf */,
 				CA15411FFD4241F7B7BC74A1 /* Raleway.ttf */,
+				3D65DBEB81B34622B2596E3F /* Maven.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -366,6 +369,7 @@
 				2C1824E2076B40538248F8B0 /* Outfit-Var.ttf in Resources */,
 				BE8FD22DB2364CB39C01B826 /* Raleway-Italic.ttf in Resources */,
 				83E1784B5BD44E1CA9D7401C /* Raleway.ttf in Resources */,
+				159CBECA3A6B47DB91500716 /* Maven.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
