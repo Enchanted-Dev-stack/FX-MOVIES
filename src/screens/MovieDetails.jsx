@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Linking,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
@@ -24,7 +25,7 @@ const MovieDetails = ({navigation, route}) => {
 
   useEffect(() => {
     axios
-      .get(`https://api.moview.site/api/movies/getinfo/${Id}`)
+      .get(`https://moviehiveapi.moview.site/fetch/movie?id=${Id}`)
       .then(response => {
         setMovieDetails(response.data);
         // console.log(response.data);
@@ -66,7 +67,7 @@ const MovieDetails = ({navigation, route}) => {
           text1: 'Movie added to favorites',
           visibilityTime: 3000,
           position: 'bottom',
-        })
+        });
       } catch (e) {
         console.log(e);
       }
@@ -77,7 +78,7 @@ const MovieDetails = ({navigation, route}) => {
         text1: 'Movie already added to favorites',
         visibilityTime: 3000,
         position: 'bottom',
-      })
+      });
     }
   };
 
@@ -88,7 +89,7 @@ const MovieDetails = ({navigation, route}) => {
       {isLoaded ? (
         <>
           <ImageBackground
-            source={{uri: movieDetails.imgaddress}}
+            source={{uri: movieDetails.poster}}
             style={{width: '100%', aspectRatio: 9 / 12}}>
             <LinearGradient
               colors={['transparent', 'transparent', 'black']}
@@ -122,7 +123,7 @@ const MovieDetails = ({navigation, route}) => {
                 {movieDetails.name}
               </Text>
               <FlatList
-                data={movieDetails.genres}
+                data={JSON.parse(movieDetails.genres)}
                 className="max-h-7"
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -163,7 +164,7 @@ const MovieDetails = ({navigation, route}) => {
                   </LinearGradient>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  className="ml-5"
+                  className="ml-3"
                   onPress={() => storeFav(movieDetails)}>
                   <View className="rounded-full p-2 bg-slate-600">
                     <Image
@@ -174,7 +175,7 @@ const MovieDetails = ({navigation, route}) => {
                     />
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity className="ml-5">
+                <TouchableOpacity className="ml-3">
                   <View className="rounded-full p-2 bg-slate-600">
                     <Image
                       source={require('../../assets/icons/share.png')}
@@ -182,14 +183,53 @@ const MovieDetails = ({navigation, route}) => {
                     />
                   </View>
                 </TouchableOpacity>
+                {movieDetails.downloadlink && (
+                  <TouchableOpacity
+                    className="ml-3"
+                    onPress={() => Linking.openURL(movieDetails?.downloadlink)}>
+                    <View className="rounded-full p-2 bg-slate-600">
+                      <Image
+                        source={require('../../assets/icons/dl.png')}
+                        style={{width: 20, height: 20, tintColor: 'white'}}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           </ImageBackground>
           <View className="px-4">
             <Text className="text-white text-xs" style={{fontFamily: 'Maven'}}>
-              {movieDetails.overview}
+              {movieDetails.plot}
             </Text>
             {/* <GradientText style={{marginVertical: 10}}> */}
+            {/* <Text
+              className="mt-4 text-lg font-bold"
+              style={{fontFamily: 'Raleway'}}>
+              Actors
+            </Text> */}
+            <ScrollView horizontal className="flex flex-row gap-2 mb-2 my-5" showsHorizontalScrollIndicator={false}>
+              {JSON.parse(movieDetails.actors).map((actor, index) => (
+                actor.profile_path && (
+                  <View className="flex items-center max-w-20 overflow-hidden" key={index}>
+                  <Image
+                    source={{
+                      uri:
+                        'https://image.tmdb.org/t/p/original' +
+                        actor.profile_path,
+                    }}
+                    className="rounded-full w-20 aspect-square"
+                  />
+                  <Text
+                    className="text-xs w-20 text-center"
+                    style={{fontFamily: 'Outfit'}}
+                    numberOfLines={2}>
+                    {actor.original_name}
+                  </Text>
+                </View>
+                )
+              ))}
+            </ScrollView>
             <Text
               className="text-white text-2xl uppercase mt-4"
               style={{fontFamily: 'Maven'}}>

@@ -4,7 +4,7 @@ import axios from 'axios';
 import WebView from 'react-native-webview';
 import {FlatList} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
-import { useFocusEffect } from '@react-navigation/native';
+import Orientation from 'react-native-orientation-locker';
 
 const Player = ({navigation, route}) => {
   const {Id, bg} = route.params;
@@ -16,20 +16,34 @@ const Player = ({navigation, route}) => {
   const screenWidth = Math.round(Dimensions.get('window').width);
   const screenHeight = Math.round(Dimensions.get('window').height);
   const toClickBtn = useRef(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const playerData =
-    player.name && player.link
-      ? player.name.split(',').map((name, index) => ({
-          name,
-          src: player.link.split(',')[index],
-        }))
-      : [];
+  const handlePlayerPress = (item, index) => {
+    const host = hosts.find(
+      host => host.name.toLowerCase() === item.name.toLowerCase(),
+    );
+    setActivePlayer(index);
+    setPlayerName(item.name);
+    if (host) {
+      setSrc(host.link + item.slug + (item.name.toLowerCase().includes('playerx') ? '/' : ''));
+    }
+  };
+
+  const onFullScreenChange = (isFullScreen) => {
+    if (isFullScreen) {
+      Orientation.lockToLandscape();
+      console.log('Locking to landscape...');
+    } else {
+      Orientation.lockToPortrait();
+    }
+  };
+  
+  
 
   useEffect(() => {
     axios
-      .get(`https://api.moview.site/api/players/hosts/getall`)
+      .get(`https://moviehiveapi.moview.site/fetch/hosts`)
       .then(response => {
-        console.log(response.data);
         setHosts(response.data);
       })
       .catch(error => {
@@ -37,10 +51,9 @@ const Player = ({navigation, route}) => {
       });
 
     axios
-      .get(`https://api.moview.site/api/players/${Id}`)
+      .get(`https://moviehiveapi.moview.site/fetch/players?id=${Id}`)
       .then(response => {
-        console.log(response.data);
-        setPlayer(response.data);
+        setPlayer(JSON.parse(response.data.players));
       })
       .catch(error => {
         console.log(error);
@@ -48,37 +61,23 @@ const Player = ({navigation, route}) => {
 
     setTimeout(() => {
       axios
-        .post('https://api.moview.site/api/movies/views/increment', {
-          movieId: Id,
-        })
+        .post('https://moviehiveapi.moview.site/views/increment?id=' + Id)
         .then(response => {
-          // console.log(response.data);
-          setPlayer(response.data);
+          console.log(response.data);
         })
         .catch(error => {
           console.log(error);
         });
     }, 60000);
-  }, []);
+  }, [Id]);
 
   useEffect(() => {
     setTimeout(() => {
-      if (player.link) {
-        console.log('player =' + player.link);
-        const link = player.link.split(',')[0];
-        const name = player.name.split(',')[0];
-        const host = hosts.find(
-          host => host.name.toLowerCase() === name.toLowerCase(),
-        );
-        if (host) {
-          console.log(host.hostlink + link);
-          setSrc(host.hostlink + link);
-          setPlayerName(host.name);
-          console.log(host.name);
-        }
+      if (player && player.length > 0) {
+        handlePlayerPress(player[0], 0);
       }
     }, 1000);
-  }, [player]);
+  }, [player, hosts]);
 
   return (
     <ImageBackground
@@ -86,25 +85,52 @@ const Player = ({navigation, route}) => {
       style={{width: screenWidth, height: screenHeight}}
       blurRadius={5}>
       <LinearGradient
-        className="w-full hfull absolute top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,0.5)]"
         colors={['transparent', 'black']}
         start={{x: 0, y: 0}}
-        end={{x: 0, y: 1}}></LinearGradient>
+        end={{x: 0, y: 1}}
+        style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}
+      />
 
-      <View className="w-full aspect-video p-0">
+      <View style={{width: '100%', aspectRatio: 16 / 9}}>
         <WebView
           originWhitelist={['*']}
           allowsFullscreenVideo
           setSupportMultipleWindows={false}
+          onShouldStartLoadWithRequest={(request) => {
+            // This prevents navigation within the iframe
+            return false; 
+          }}
+          onMessage={(event) => {
+            console.log("Received event from WebView: ", event.nativeEvent.data);
+            if (event.nativeEvent.data === 'fullscreenchange') {
+              console.log(!isFullScreen);
+              onFullScreenChange(!isFullScreen);
+              setIsFullScreen(!isFullScreen);
+            }
+          }}          
           source={{
             html: `
             <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
             ${
-              playerName.toLowerCase() === 'playerx'
-                ? `<iframe allowfullscreen src='${src}' style='width: 100%; aspect-ratio: 16/9;border:0'></iframe>`
-                : `<iframe allowfullscreen src='${src}' style='width: 100%; aspect-ratio: 16/9;border:0' sandbox='allow-scripts'></iframe>`
+              (src.includes('boosterx') || src.includes('moviesapi'))
+                ? `<iframe allowfullscreen src='${src}' scrolling="0" frameborder="0" style='width: 100%; aspect-ratio: 16/9;border:0'></iframe>`
+                : `<iframe allowfullscreen src='${src}' style='width: 100%; aspect-ratio: 16/9;border:0' sandbox='allow-scripts allow-popups allow-forms allow-presentation allow-modals allow-popups-to-escape-sandbox allow-downloads '></iframe>`
             }
-            
+            <script>
+            var iframe = document.querySelector('iframe');
+            iframe.addEventListener('fullscreenchange', function() {
+              window.ReactNativeWebView.postMessage('fullscreenchange');
+            });
+            iframe.addEventListener('webkitfullscreenchange', function() {
+              window.ReactNativeWebView.postMessage('fullscreenchange');
+            });
+            iframe.addEventListener('mozfullscreenchange', function() {
+              window.ReactNativeWebView.postMessage('fullscreenchange');
+            });
+            iframe.addEventListener('MSFullscreenChange', function() {
+              window.ReactNativeWebView.postMessage('fullscreenchange');
+            });
+            </script>
             `
           }}
           style={{
@@ -114,12 +140,13 @@ const Player = ({navigation, route}) => {
           }}
         />
       </View>
-      <Text className="text-xs px-4 py-2 text-center">
-        if movie doesn't start automatically in 5 secs. Please click on any
-        server button below
+
+      <Text style={{textAlign: 'center', color: 'white', padding: 8}}>
+        If the movie doesn't start automatically in 5 secs, please click on any server button below
       </Text>
+
       <FlatList
-        data={playerData ? playerData : []}
+        data={player ? player : []}
         contentContainerStyle={{
           justifyContent: 'center',
           alignItems: 'center',
@@ -136,7 +163,6 @@ const Player = ({navigation, route}) => {
             }
             start={{x: 0, y: 0}}
             end={{x: 1, y: 0}}
-            // className={`${item.name.toLowerCase() === 'vidhide'||item.name.toLowerCase() === 'streamwish'||item.name.toLowerCase() === 'streamtape' ? 'hidden' : ''}`}
             style={{
               borderRadius: 10,
               marginRight: 2,
@@ -146,20 +172,8 @@ const Player = ({navigation, route}) => {
             <Text
               key={index}
               ref={index === 0 ? toClickBtn : null}
-              className={`text-white text-md text-center py-2 px-4 `}
-              style={{fontFamily: 'Maven'}}
-              onPress={() => {
-                const host = hosts.find(
-                  host => host.name.toLowerCase() === item.name.toLowerCase(),
-                );
-                setActivePlayer(index);
-                setPlayerName(item.name);
-                console.log(item.name);
-                if (host) {
-                  console.log(host.hostlink + item.src);
-                  setSrc(host.hostlink + item.src);
-                }
-              }}>
+              style={{color: 'white', textAlign: 'center', padding: 8, fontFamily: 'Maven'}}
+              onPress={() => handlePlayerPress(item, index)}>
               {item.name}
             </Text>
           </LinearGradient>

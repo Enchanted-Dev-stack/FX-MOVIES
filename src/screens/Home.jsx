@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
+import FastImage from 'react-native-fast-image';
 import {FlatList} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import Genres from '../components/Genres';
@@ -24,6 +25,7 @@ const Home = ({navigation}) => {
   const [isCarouselLoaded, setIsCarouselLoaded] = useState(false);
   const navigationRef = useRef();
   const carouselRef = useRef();
+  const [isupdated, setIsUpdated] = useState(true);
 
   const Shimmer = createShimmerPlaceholder(LinearGradient);
 
@@ -41,7 +43,7 @@ const Home = ({navigation}) => {
     console.log('hello');
 
     axios
-      .get('https://api.moview.site/api/movies/getfeatured')
+      .get('https://moviehiveapi.moview.site/fetch/featured')
       .then(response => {
         setCarouselData(response.data);
         setIsCarouselLoaded(true);
@@ -52,20 +54,23 @@ const Home = ({navigation}) => {
       });
 
     axios
-      .get('https://api.moview.site/api/movies/weeklytop')
+      .get('https://moviehiveapi.moview.site/fetch/weekly')
       .then(response => {
         setWeeklyTop(response.data);
       })
       .catch(error => {
         console.log(error);
       });
+
+      
   }, []);
+
 
   const renderCarousel = ({item, index}) => {
     return (
         <View className="relative bg-slate-700" key={index}>
         <ImageBackground
-          source={{uri: item.imgaddress}}
+          source={{uri: item.poster}}
           className="aspect-[9/13]"
           style={{
             width: screenWidth,
@@ -85,7 +90,7 @@ const Home = ({navigation}) => {
               className="font-semibold text-white mb-4"
               style={{fontFamily: 'Poppins', fontSize: 12}}
               numberOfLines={3}>
-              {item.overview}
+              {item.plot}
             </Text>
             <View className="flex justify-start flex-row">
               <View className="bg-transparent rounded-full flex flex-row items-center overflow-hidden pr-4 gap-3">
@@ -99,7 +104,7 @@ const Home = ({navigation}) => {
                     <TouchableOpacity className='flex flex-row justify-center items-center px-5 gap-2' onPress={() => navigation.navigate('MovieDetails', {Id: item.id})}>
                       <Image source={require('../../assets/icons/play.png')} style={{width: 15, height: 15,tintColor: 'white'}}></Image>
                       <Text
-                        className="uppercase text-sm text-center py-2"
+                        className="uppercase text-sm text-center py-2 text-white"
                         style={{fontFamily: 'Poppins'}}>
                         WATCH NOW
                       </Text>
@@ -210,8 +215,8 @@ const Home = ({navigation}) => {
           Id: item.id,});
       }}>
       <View className="max-w-[140px] bg-transparent overflow-hidden" >
-        <Image
-          source={{uri: item.imgaddress}}
+        <FastImage
+          source={{uri: item.poster}}
           style={{width: 140, aspectRatio: 9 / 12, borderRadius: 10}}
         />
         <Text
