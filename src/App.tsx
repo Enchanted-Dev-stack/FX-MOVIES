@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Player from './screens/Player';
 import MovieDetails from './screens/MovieDetails';
 import Toast from 'react-native-toast-message';
+import EmbeddedPlayer from './screens/EmbeddedPlayer';
 
 const Stack = createNativeStackNavigator();
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Stack.Screen name="TabBar" component={TabBar} />
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="Player" component={Player} />
+        <Stack.Screen name="EmbeddedPlayer" component={EmbeddedPlayer} />
         <Stack.Screen name="MovieDetails" component={MovieDetails} />
       </Stack.Navigator>
       <Toast></Toast>

@@ -43,7 +43,7 @@ const Home = ({navigation}) => {
     console.log('hello');
 
     axios
-      .get('https://moviehiveapi.moview.site/fetch/featured')
+      .get('https://moviehive.spotlyst.in/fetch/featured')
       .then(response => {
         setCarouselData(response.data);
         setIsCarouselLoaded(true);
@@ -54,7 +54,7 @@ const Home = ({navigation}) => {
       });
 
     axios
-      .get('https://moviehiveapi.moview.site/fetch/weekly')
+      .get('https://moviehive.spotlyst.in/fetch/weekly')
       .then(response => {
         setWeeklyTop(response.data);
       })

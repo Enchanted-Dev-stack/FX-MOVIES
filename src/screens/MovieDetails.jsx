@@ -15,6 +15,7 @@ import WebView from 'react-native-webview';
 // import Video from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import Orientation from 'react-native-orientation-locker';
 
 const MovieDetails = ({navigation, route}) => {
   const {Id} = route.params;
@@ -24,8 +25,11 @@ const MovieDetails = ({navigation, route}) => {
   const [favs, setFavs] = useState([]);
 
   useEffect(() => {
+
+    Orientation.lockToPortrait();
+
     axios
-      .get(`https://moviehiveapi.moview.site/fetch/movie?id=${Id}`)
+      .get(`https://moviehive.spotlyst.in/fetch/movie?id=${Id}`)
       .then(response => {
         setMovieDetails(response.data);
         // console.log(response.data);
@@ -139,7 +143,7 @@ const MovieDetails = ({navigation, route}) => {
               <View className="flex flex-row justify-around">
                 <TouchableOpacity
                   onPress={() =>
-                    navigation.navigate('Player', {
+                    navigation.navigate('EmbeddedPlayer', {
                       Id,
                       bg: movieDetails.backdrop_img,
                     })

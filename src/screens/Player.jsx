@@ -42,7 +42,7 @@ const Player = ({navigation, route}) => {
 
   useEffect(() => {
     axios
-      .get(`https://moviehiveapi.moview.site/fetch/hosts`)
+      .get(`https://moviehive.spotlyst.in/fetch/hosts`)
       .then(response => {
         setHosts(response.data);
       })
@@ -51,7 +51,7 @@ const Player = ({navigation, route}) => {
       });
 
     axios
-      .get(`https://moviehiveapi.moview.site/fetch/players?id=${Id}`)
+      .get(`https://moviehive.spotlyst.in/fetch/players?id=${Id}`)
       .then(response => {
         setPlayer(JSON.parse(response.data.players));
       })
@@ -61,7 +61,7 @@ const Player = ({navigation, route}) => {
 
     setTimeout(() => {
       axios
-        .post('https://moviehiveapi.moview.site/views/increment?id=' + Id)
+        .post('https://moviehive.spotlyst.in/views/increment?id=' + Id)
         .then(response => {
           console.log(response.data);
         })

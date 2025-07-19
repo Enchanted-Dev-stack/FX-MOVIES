@@ -13,7 +13,7 @@ const Explore = ({navigation}) => {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    axios.get(`https://moviehiveapi.moview.site/fetch/search?q=${query}`)
+    axios.get(`https://moviehive.spotlyst.in/fetch/search?q=${query}`)
     .then((response) => {
       setResults(response.data);
     })

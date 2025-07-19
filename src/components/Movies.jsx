@@ -11,7 +11,7 @@ const Movies = props => {
 
   useEffect(() => {
     axios
-      .get('https://moviehiveapi.moview.site/fetch/movies')
+      .get('https://moviehive.spotlyst.in/fetch/movies')
       .then(response => {
         setMovies(response.data);
         // console.log(response.data);

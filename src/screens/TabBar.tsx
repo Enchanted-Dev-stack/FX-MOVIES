@@ -30,16 +30,16 @@ const TabBar = ({navigation}: any) => {
   useEffect(() => {
     //version checker
     const checkVersion = async () => {
-      const currentVersion = DeviceInfo.getVersion(); // Get the current version of the app
+      const currentVersion = DeviceInfo.getBuildNumber(); // Get the current version of the app
       // console.log("currentVersion",currentVersion);
       try {
         const response = await axios.get(
-          'https://moviehiveapi.moview.site/fetch/version',
+          'https://moviehive.spotlyst.in/fetch/version',
         );
-        const latestVersion = response.data.version;
+        const latestVersion = response.data.version_code;
         // console.log("latestVersion",latestVersion);
 
-        if (latestVersion !== currentVersion) {
+        if (parseInt(latestVersion) !== parseInt(currentVersion)) {
           // Navigate to an update screen if the versions don't match
           setIsUpdated(false);
         } else {
@@ -52,6 +52,18 @@ const TabBar = ({navigation}: any) => {
 
     checkVersion();
   }, []);
+
+  const getLatestVersion = async () => {
+    try {
+      const LatestVersion = await axios.get(
+        'https://moviehive.spotlyst.in/fetch/version',
+      );
+      return LatestVersion.data.version_code;
+    } catch (error) {
+      console.error('Error getting Latest version:', error);
+      return null;
+    }
+  };
 
   return isypdated ? (
     <tabs.Navigator
@@ -161,7 +173,7 @@ const TabBar = ({navigation}: any) => {
   ) : (
     <View className="bg-black flex items-center justify-center text-white w-full h-full">
       <Text className="text-lg text-center" style={{fontFamily: 'Montserrat'}}>
-        A newer version of the app is available. Please update it.
+        A newer version of the app is available. Please update it from {DeviceInfo.getBuildNumber()} to
       </Text>
       <LinearGradient
       className='rounded-md'
