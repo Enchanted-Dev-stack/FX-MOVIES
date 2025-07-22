@@ -77,10 +77,21 @@ android {
     namespace "com.moview"
     defaultConfig {
         applicationId "com.moview"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion Math.max(24, rootProject.ext.minSdkVersion) // API 24+ for AdGuard
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2
         versionName "1.0.1"
+        
+        ndk {
+            abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
+        }
+    }
+    
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.13.0"
+        }
     }
     signingConfigs {
         release {
