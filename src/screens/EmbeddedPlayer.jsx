@@ -1,21 +1,41 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar, StyleSheet } from "react-native";
 import WebView from "react-native-webview";
 import Orientation from 'react-native-orientation-locker';
+import AdBlocker from '../modules/AdBlocker'; // Add AdGuard integration
 
 export default function EmbeddedPlayer({ route }) {
   const { Id } = route.params;
+  const [adBlockerReady, setAdBlockerReady] = useState(false);
 
   useEffect(() => {
     Orientation.lockToLandscape();
     StatusBar.setHidden(true, 'fade');
     console.log('📺 EmbeddedPlayer mounted');
 
+    // Initialize AdGuard silently in background
+    initializeAdGuard();
+
     return () => {
       Orientation.lockToPortrait();
       StatusBar.setHidden(false, 'fade');
     };
   }, []);
+
+  const initializeAdGuard = async () => {
+    try {
+      console.log('🛡️ Initializing AdGuard...');
+      const success = await AdBlocker.init({ enableLogging: true });
+      if (success) {
+        await AdBlocker.enable();
+        setAdBlockerReady(true);
+        console.log('✅ AdGuard ready!');
+      }
+    } catch (error) {
+      console.log('⚠️ AdGuard init failed, using fallback:', error.message);
+      // Silently continue with existing protection
+    }
+  };
 
   // 🧨 Inject Full Hybrid Adblocker
   const adBlockScript = `
@@ -131,10 +151,26 @@ export default function EmbeddedPlayer({ route }) {
     "googletagmanager.com", "moatads.com"
   ];
 
-  const handleNavigation = ({ url }) => {
+  const handleNavigation = async ({ url }) => {
+    console.log('🔍 Checking URL:', url);
+
+    // First, check with AdGuard if available
+    if (adBlockerReady) {
+      try {
+        const shouldBlock = await AdBlocker.filterRequest(url);
+        if (shouldBlock) {
+          console.log('🛑 AdGuard blocked:', url);
+          return false;
+        }
+      } catch (error) {
+        console.error('AdGuard filter error:', error);
+      }
+    }
+
+    // Fallback to existing domain blocking
     const isAd = adDomains.some(domain => url.includes(domain));
     if (isAd) {
-      console.log("🛑 Blocked network request to:", url);
+      console.log("🛑 Domain blocked:", url);
       return false; // Block ad/tracker domains
     }
     if (!url.startsWith("https://www.moviehive.pro") && !url.startsWith("https://ww5.123moviesfree.net")) {
